@@ -2,12 +2,41 @@
 
 
 #include "Player/MyPlayerController.h"
-#include "EnhancedInputSubsystems.h"
+//#include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "Interaction/EnemyInterface.h"
 
 AMyPlayerController::AMyPlayerController()
 {
 	bReplicates = true;
+}
+
+void AMyPlayerController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+
+	CursorTrace();
+}
+
+void AMyPlayerController::CursorTrace()
+{
+	FHitResult CursorHit;
+	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
+	if (!CursorHit.bBlockingHit) return;
+
+	LastActor = ThisActor;
+	ThisActor = Cast<IEnemyInterface>(CursorHit.GetActor());
+
+	if (ThisActor && !LastActor)
+		ThisActor->HighlightActor();
+	else if (!ThisActor && LastActor)
+		LastActor->UnHighlightActor();
+	else if (ThisActor && LastActor && ThisActor != LastActor)
+	{
+		LastActor->UnHighlightActor();
+		ThisActor->HighlightActor();
+	}
 }
 
 void AMyPlayerController::BeginPlay()
@@ -26,8 +55,6 @@ void AMyPlayerController::BeginPlay()
 	InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 	InputModeData.SetHideCursorDuringCapture(false);
 	SetInputMode(InputModeData);
-
-	
 }
 
 void AMyPlayerController::SetupInputComponent()
