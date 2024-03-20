@@ -18,10 +18,13 @@ class AURA_API AEnemyCharacter : public AMyCharacterBase, public IEnemyInterface
 public:
 	AEnemyCharacter();
 
-	virtual void BeginPlay() override;
 
 #pragma region EnemyInterface
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
 #pragma endregion
+
+protected:
+	virtual void BeginPlay() override;
+	virtual void InitAbilityActorInfo() override;
 };

@@ -18,3 +18,7 @@ void AMyCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 }
+
+void AMyCharacterBase::InitAbilityActorInfo()
+{
+}

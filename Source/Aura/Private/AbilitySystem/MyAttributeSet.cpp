@@ -3,7 +3,10 @@
 
 #include "AbilitySystem/MyAttributeSet.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "GameplayEffectExtension.h"
+#include "GameFramework/Character.h"
 #include "Net/UnrealNetwork.h"
 
 UMyAttributeSet::UMyAttributeSet()
@@ -22,6 +25,63 @@ void UMyAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	DOREPLIFETIME_CONDITION_NOTIFY(UMyAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UMyAttributeSet, Mana, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UMyAttributeSet, MaxMana, COND_None, REPNOTIFY_Always);
+}
+
+void UMyAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
+{
+	Super::PreAttributeChange(Attribute, NewValue);
+
+	if (Attribute == GetHealthAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0, GetMaxHealth());
+	}
+	if (Attribute == GetManaAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0, GetMaxMana());
+	}
+}
+
+void UMyAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData& Data,
+	FEffectProperties& Props) const
+{
+	//Source = causer, Target = target(owner of THIS attribute set)
+	
+	Props.EffectContextHandle = Data.EffectSpec.GetContext();
+	Props.Source.ASC = Props.EffectContextHandle.GetOriginalInstigatorAbilitySystemComponent();
+
+	if (IsValid(Props.Source.ASC) && Props.Source.ASC->AbilityActorInfo.IsValid() && Props.Source.ASC->AbilityActorInfo->AvatarActor.
+		IsValid())
+	{
+		Props.Source.AvatarActor = Props.Source.ASC->AbilityActorInfo->AvatarActor.Get();
+		Props.Source.Controller = Props.Source.ASC->AbilityActorInfo->PlayerController.Get();
+		if (!Props.Source.Controller && Props.Source.AvatarActor)
+		{
+			if (const APawn* Pawn = Cast<APawn>(Props.Source.AvatarActor))
+			{
+				Props.Source.Controller = Pawn->GetController();
+			}
+		}
+		if (Props.Source.Controller)
+		{
+			Props.Source.Character = Cast<ACharacter>(Props.Source.Controller->GetPawn());
+		}
+	}
+	if (Data.Target.AbilityActorInfo.IsValid() && Data.Target.AbilityActorInfo->AvatarActor.IsValid())
+	{
+		Props.Target.AvatarActor = Data.Target.AbilityActorInfo->AvatarActor.Get();
+		Props.Target.Controller = Data.Target.AbilityActorInfo->PlayerController.Get();
+		Props.Target.Character = Cast<ACharacter>(Props.Target.AvatarActor);
+		Props.Target.ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(
+			Props.Target.AvatarActor);
+	}
+}
+
+void UMyAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
+{
+	Super::PostGameplayEffectExecute(Data);
+
+	FEffectProperties Props;
+	SetEffectProperties(Data, Props);
 }
 
 void UMyAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
@@ -43,3 +103,4 @@ void UMyAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) co
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UMyAttributeSet, MaxMana, OldMaxMana);
 }
+
