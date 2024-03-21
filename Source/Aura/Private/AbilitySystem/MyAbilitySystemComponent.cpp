@@ -11,10 +11,10 @@ void UMyAbilitySystemComponent::AbilityActorInfoSet()
 void UMyAbilitySystemComponent::EffectApplied(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec,
                                               FActiveGameplayEffectHandle ActiveEffectHandle)
 {
-	FGameplayTagContainer Tags;
-	EffectSpec.GetAllAssetTags(Tags);
-	for (const FGameplayTag& Tag : Tags)
-	{
-		//TODO: Broadcast the tag to the widget controller
-	}
+	FGameplayTagContainer AssetTags;
+	EffectSpec.GetAllAssetTags(AssetTags);
+
+	EffectAssetTags.Broadcast(AssetTags);
+	
+	
 }
