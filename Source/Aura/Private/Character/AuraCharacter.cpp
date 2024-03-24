@@ -27,6 +27,7 @@ void AAuraCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController); //Server-Only
 
 	InitAbilityActorInfo();
+	AddCharacterAbilities();
 }
 
 void AAuraCharacter::OnRep_PlayerState()
@@ -34,6 +35,13 @@ void AAuraCharacter::OnRep_PlayerState()
 	Super::OnRep_PlayerState();
 
 	InitAbilityActorInfo();
+}
+
+int32 AAuraCharacter::GetCharacterLevel()
+{
+	AMyPlayerState* PS = GetPlayerState<AMyPlayerState>();
+	check(PS);
+	return PS->GetCharacterLevel();
 }
 
 void AAuraCharacter::InitAbilityActorInfo()
@@ -53,4 +61,6 @@ void AAuraCharacter::InitAbilityActorInfo()
 		AMyHUD* MyHUD = Cast<AMyHUD>(PlayerController->GetHUD());
 		MyHUD->InitOverlay(PlayerController, MyPlayerState, AbilitySystemComponent, AttributeSet);
 	}
+
+	InitializeDefaultAttributes();
 }

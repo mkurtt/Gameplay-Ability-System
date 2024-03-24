@@ -18,13 +18,22 @@ class AURA_API AEnemyCharacter : public AMyCharacterBase, public IEnemyInterface
 public:
 	AEnemyCharacter();
 
-
 #pragma region EnemyInterface
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
 #pragma endregion
 
+#pragma region CombatInterface
+	virtual int32 GetCharacterLevel() override;
+#pragma endregion
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo() override;
+
+	// -- Level --
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
+	int32 Level = 1;
+	
+private:
 };

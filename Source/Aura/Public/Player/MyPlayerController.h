@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "GameFramework/PlayerController.h"
 #include "MyPlayerController.generated.h"
 
@@ -10,6 +11,7 @@ struct FInputActionValue;
 class UInputMappingContext;
 class UInputAction;
 class IEnemyInterface;
+class UMyInputConfig;
 
 /**
  * 
@@ -28,15 +30,22 @@ protected:
 	virtual void SetupInputComponent() override;
 
 private:
+	void Move(const FInputActionValue& InputActionValue);
+	void CursorTrace();
+
+	void AbilityInputTagPressed(FGameplayTag InputTag);
+	void AbilityInputTagReleased(FGameplayTag InputTag);
+	void AbilityInputTagHeld(FGameplayTag InputTag);
+	
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<UInputMappingContext> AuraContext;
 	
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<UInputAction> MoveAction;
 
-	void Move(const FInputActionValue& InputActionValue);
-
-	void CursorTrace();
-	TObjectPtr<IEnemyInterface> LastActor;
-	TObjectPtr<IEnemyInterface> ThisActor;
+	UPROPERTY(EditDefaultsOnly, Category="Input")
+	TObjectPtr<UMyInputConfig> InputConfig;
+	
+	TScriptInterface<IEnemyInterface> LastActor;
+	TScriptInterface<IEnemyInterface> ThisActor;
 };

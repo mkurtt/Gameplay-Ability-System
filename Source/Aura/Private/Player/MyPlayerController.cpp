@@ -2,9 +2,8 @@
 
 
 #include "Player/MyPlayerController.h"
-//#include "EnhancedInputSubsystems.h"
-#include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Input/MyInputComponent.h"
 #include "Interaction/EnemyInterface.h"
 
 AMyPlayerController::AMyPlayerController()
@@ -26,7 +25,7 @@ void AMyPlayerController::CursorTrace()
 	if (!CursorHit.bBlockingHit) return;
 
 	LastActor = ThisActor;
-	ThisActor = Cast<IEnemyInterface>(CursorHit.GetActor());
+	ThisActor = CursorHit.GetActor();
 
 	if (ThisActor && !LastActor)
 		ThisActor->HighlightActor();
@@ -37,6 +36,21 @@ void AMyPlayerController::CursorTrace()
 		LastActor->UnHighlightActor();
 		ThisActor->HighlightActor();
 	}
+}
+
+void AMyPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
+{
+	GEngine->AddOnScreenDebugMessage(1, 3.f, FColor::Red, *InputTag.ToString());
+}
+
+void AMyPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
+{
+	GEngine->AddOnScreenDebugMessage(2, 3.f, FColor::Blue, *InputTag.ToString());
+}
+
+void AMyPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
+{
+	GEngine->AddOnScreenDebugMessage(3, 3.f, FColor::Green, *InputTag.ToString());
 }
 
 void AMyPlayerController::BeginPlay()
@@ -61,9 +75,10 @@ void AMyPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
+	UMyInputComponent* MyInputComponent = CastChecked<UMyInputComponent>(InputComponent);
 
-	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMyPlayerController::Move);
+	MyInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMyPlayerController::Move);
+	MyInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
 }
 
 void AMyPlayerController::Move(const FInputActionValue& InputActionValue)
