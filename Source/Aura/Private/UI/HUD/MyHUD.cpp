@@ -3,6 +3,7 @@
 
 #include "UI/HUD/MyHUD.h"
 
+#include "GameFramework/PlayerState.h"
 #include "UI/Widget/MyUserWidget.h"
 #include "UI/WidgetController/AttributeMenuWidgetController.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
@@ -12,6 +13,10 @@ void AMyHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystem
 	checkf(OverlayWidgetClass, TEXT("Overlay Widget Class is null in BP_HUD"))
 	checkf(OverlayWidgetControllerClass, TEXT("Overlay Widget Controller Class is null in BP_HUD"))
 
+	auto PlayerId = PC->GetPlayerState<APlayerState>()->GetPlayerId();
+	auto UniqueID = PC->GetPlayerState<APlayerState>()->GetUniqueID();
+	auto UniqueNetId = PC->GetPlayerState<APlayerState>()->GetUniqueId();
+	
 	UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), OverlayWidgetClass);
 	OverlayWidget = Cast<UMyUserWidget>(Widget);
 

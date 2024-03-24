@@ -50,3 +50,9 @@ void AMyCharacterBase::AddCharacterAbilities()
 
 	ASC->AddCharacterAbilities(StartupAbilities);
 }
+
+FVector AMyCharacterBase::GetCombatSocketLocation()
+{
+	check(Weapon);
+	return Weapon->GetSocketLocation(WeaponTipSocketName);
+}
