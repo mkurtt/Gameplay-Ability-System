@@ -90,7 +90,7 @@ void AMyPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 				this, ControlledPawn->GetActorLocation(), CachedDestination))
 			{
 				Spline->ClearSplinePoints();
-				for (FVector PathPoint : NavPath->PathPoints)
+ 				for (FVector PathPoint : NavPath->PathPoints)
 				{
 					Spline->AddSplinePoint(PathPoint, ESplineCoordinateSpace::World);
 				}
