@@ -34,6 +34,10 @@ public:
 
 	FGameplayTag Attribute_Vital_Health;
 	FGameplayTag Attribute_Vital_Mana;
+	
+	FGameplayTag Damage;
+	
+	FGameplayTag Effect_HitReact;
 
 	FGameplayTag InputTag_LMB;
 	FGameplayTag InputTag_RMB;

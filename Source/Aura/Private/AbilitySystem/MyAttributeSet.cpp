@@ -54,6 +54,9 @@ void UMyAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	//Vital Attributes
 	DOREPLIFETIME_CONDITION_NOTIFY(UMyAttributeSet, Health, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UMyAttributeSet, Mana, COND_None, REPNOTIFY_Always);
+	//Vital Attributes
+	DOREPLIFETIME_CONDITION_NOTIFY(UMyAttributeSet, Health, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UMyAttributeSet, Mana, COND_None, REPNOTIFY_Always);
 }
 
 void UMyAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
@@ -116,10 +119,30 @@ void UMyAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(), 0, GetMaxHealth()));
+		UE_LOG(LogTemp,Warning,TEXT("Changes Health on %s, Health: %f"), *Props.Target.AvatarActor.GetName(), GetHealth());
 	}
 	if (Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
 		SetMana(FMath::Clamp(GetMana(), 0, GetMaxMana()));
+	}
+	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
+	{
+		const float LocalIncomingDamage = GetIncomingDamage();
+		SetIncomingDamage(0);
+		if (LocalIncomingDamage > 0)
+		{
+			const float NewHealth = GetHealth() - LocalIncomingDamage;
+			SetHealth(FMath::Clamp(NewHealth, 0, GetMaxHealth()));
+
+			const bool bFatal = NewHealth <= 0;
+			if (!bFatal)
+			{
+				FGameplayTagContainer TagContainer;
+				TagContainer.AddTag(FMyGameplayTags::Get().Effect_HitReact);
+				Props.Target.ASC->TryActivateAbilitiesByTag(TagContainer);
+			}
+			
+		}
 	}
 }
 

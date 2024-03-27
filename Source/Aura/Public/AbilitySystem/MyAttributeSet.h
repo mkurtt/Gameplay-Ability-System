@@ -186,6 +186,16 @@ public:
 
 #pragma endregion
 
+#pragma region Meta Attributes
+	
+	// -- IncomingDamage --
+	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
+	FGameplayAttributeData IncomingDamage;
+	ATTRIBUTE_ACCESSORS(ThisClass, IncomingDamage)
+	
+#pragma endregion
+	
+
 private:
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
 

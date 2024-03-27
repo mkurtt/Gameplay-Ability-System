@@ -1,7 +1,7 @@
 // copyright MGK
 
 
-#include "MMC_MaxMana.h"
+#include "AbilitySystem/ModMagCalc/MMC_MaxMana.h"
 
 #include "AbilitySystem/MyAttributeSet.h"
 #include "Interaction/CombatInterface.h"

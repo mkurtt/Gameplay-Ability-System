@@ -27,10 +27,16 @@ void FMyGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Attribute_Vital_Health = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Vital.Health"), FString("Amount of damage a character can take before death"));
 	GameplayTags.Attribute_Vital_Mana = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Secondary.ManaRegeneration"), FString("Amount of Mana regenerated every 1 second"));
 
+	GameplayTags.Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Damage"), FString("Damage"));
+	
+	GameplayTags.Effect_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Hit.React"), FString("Hit reaction"));
+
+	
 	GameplayTags.InputTag_LMB = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.LMB"), FString("Input Tag for Left Mouse Button"));
 	GameplayTags.InputTag_RMB = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.RMB"), FString("Input Tag for Right Mouse Button"));
 	GameplayTags.InputTag_Alpha1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.Alpha1"), FString("Input Tag for Alpha 1 Key"));
 	GameplayTags.InputTag_Alpha2 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.Alpha2"), FString("Input Tag for Alpha 2 Key"));
 	GameplayTags.InputTag_Alpha3 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.Alpha3"), FString("Input Tag for Alpha 3 Key"));
 	GameplayTags.InputTag_Alpha4 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.Alpha4"), FString("Input Tag for Alpha 4 Key"));
+	
 }

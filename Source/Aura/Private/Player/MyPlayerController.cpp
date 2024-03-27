@@ -76,16 +76,15 @@ void AMyPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 		if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
 		return;
 	}
+	
+	if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
 
-	if (bHasTarget)
-	{
-		if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
-	}
-	else
+	if (!bHasTarget && !bShiftKeyDown)
 	{
 		const APawn* ControlledPawn = GetPawn();
 		if (ControlledPawn && FollowTime <= ShortPressThreshold)
 		{
+			auto loc = ControlledPawn->GetActorLocation();
 			if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(
 				this, ControlledPawn->GetActorLocation(), CachedDestination))
 			{
@@ -112,7 +111,7 @@ void AMyPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 		return;
 	}
 
-	if (bHasTarget)
+	if (bHasTarget || bShiftKeyDown)
 	{
 		if (GetASC()) GetASC()->AbilityInputTagHeld(InputTag);
 	}
@@ -165,6 +164,8 @@ void AMyPlayerController::SetupInputComponent()
 	UMyInputComponent* MyInputComponent = CastChecked<UMyInputComponent>(InputComponent);
 
 	MyInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMyPlayerController::Move);
+	MyInputComponent->BindAction(ShiftAction, ETriggerEvent::Started, this, &AMyPlayerController::ShiftPressed);
+	MyInputComponent->BindAction(ShiftAction, ETriggerEvent::Completed, this, &AMyPlayerController::ShiftReleased);
 	MyInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityInputTagPressed,
 	                                     &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
 }

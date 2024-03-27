@@ -37,18 +37,19 @@ private:
 	void AbilityInputTagPressed(FGameplayTag InputTag);
 	void AbilityInputTagReleased(FGameplayTag InputTag);
 	void AbilityInputTagHeld(FGameplayTag InputTag);
-	
+
 	UMyAbilitySystemComponent* GetASC();
-	
+
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<UInputMappingContext> AuraContext;
-	
+
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<UInputAction> MoveAction;
-
+	UPROPERTY(EditAnywhere, Category="Input")
+	TObjectPtr<UInputAction> ShiftAction;
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	TObjectPtr<UMyInputConfig> InputConfig;
-	
+
 	void CursorTrace();
 	TScriptInterface<IEnemyInterface> LastActor;
 	TScriptInterface<IEnemyInterface> ThisActor;
@@ -57,14 +58,18 @@ private:
 	UPROPERTY()
 	TObjectPtr<UMyAbilitySystemComponent> ASC;
 
-	
+	//Shift
+	void ShiftPressed() { bShiftKeyDown = true; }
+	void ShiftReleased() { bShiftKeyDown = false; }
+	bool bShiftKeyDown = false;
+
 	//AutoRun
 	FVector CachedDestination = FVector::ZeroVector;
 	float FollowTime = 0.f;
 	float ShortPressThreshold = 0.2f;
 	bool bAutoRunning = false;
 	bool bHasTarget = false;
-	
+
 	UPROPERTY(EditDefaultsOnly)
 	float AutoRunAcceptanceRadius = 50.f;
 	UPROPERTY(VisibleAnywhere)
